@@ -10,10 +10,14 @@
 
   <ItemGroup>
     <None Remove="Resources\challenge-1-input.txt" />
+    <None Remove="Resources\challenge-2-input.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Resources\challenge-1-input.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\challenge-2-input.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
