@@ -15,7 +15,7 @@ namespace advent_of_code.december_1
             return data;
         }
 
-        public int ProcessData(Data data)
+        public static int CalculateDistance(Data data)
         {
             data.leftList.Sort();
             data.rightList.Sort();
@@ -23,7 +23,11 @@ namespace advent_of_code.december_1
             var sumOfDistances = data.leftList.Select((x, i) => Math.Abs(data.leftList[i] - data.rightList[i])).Sum();
 
             return sumOfDistances;
+        }
 
+        public static int CalculateSimilarityScore(Data data)
+        {
+           return data.leftList.Select(n => n * data.rightList.Count(x => x == n)).Sum();
         }
     }
 
