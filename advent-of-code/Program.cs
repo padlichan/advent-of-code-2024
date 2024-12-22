@@ -9,10 +9,12 @@ var distanceSum = Challenge1.CalculateDistance(data1);
 Console.WriteLine($"Sum of distance: {distanceSum}");
 var similarityScore = Challenge1.CalculateSimilarityScore(data1);
 Console.WriteLine($"Similarity score: {similarityScore}");
+Console.WriteLine();Console.WriteLine();
 
 
 //December 2
-Console.WriteLine();
 Console.WriteLine("December 2");
 var data2 = Challenge2.GetData();
 Console.WriteLine($"Safe reports: {Challenge2.CountSafeReports(data2)}");
+Console.WriteLine($"Safe reports with dampening: {Challenge2.CountSafeReportsWithDampener(data2)}");
+
