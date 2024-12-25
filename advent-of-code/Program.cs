@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using advent_of_code.december_1;
 using advent_of_code.december_2;
+using advent_of_code.december_3;
 
 //December 1
 Console.WriteLine("December 1");
@@ -9,7 +10,7 @@ var distanceSum = Challenge1.CalculateDistance(data1);
 Console.WriteLine($"Sum of distance: {distanceSum}");
 var similarityScore = Challenge1.CalculateSimilarityScore(data1);
 Console.WriteLine($"Similarity score: {similarityScore}");
-Console.WriteLine();Console.WriteLine();
+Console.WriteLine();
 
 
 //December 2
@@ -17,4 +18,8 @@ Console.WriteLine("December 2");
 var data2 = Challenge2.GetData();
 Console.WriteLine($"Safe reports: {Challenge2.CountSafeReports(data2)}");
 Console.WriteLine($"Safe reports with dampening: {Challenge2.CountSafeReportsWithDampener(data2)}");
+Console.WriteLine();
+
+//December 3
+Challenge3 challenge3 = new();
 
