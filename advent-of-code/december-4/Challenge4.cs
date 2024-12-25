@@ -10,14 +10,39 @@ internal class Challenge4
 
     public Challenge4()
     {
-        var verticalData = GetDataVertical();
         var horizontalData = GetDataHorizontal();
+
+        //Part 1
+        var verticalData = GetDataVertical();
         int count = horizontalData.Select(line => CountXmas(line)).Sum();
         count += verticalData.Select(column => CountXmas(column)).Sum();
         count += GetDiagonals(horizontalData).Select(d => CountXmas(d)).Sum();
         count += GetAntiDiagonals(horizontalData).Select(ad => CountXmas(ad)).Sum();
         Console.WriteLine("December 4");
-        Console.WriteLine($"XMAS count: {count}\n");
+        Console.WriteLine($"XMAS count: {count}");
+
+        //Part2
+        var masmasCount = CountMASMAS(horizontalData);
+        Console.WriteLine($"MAS in an X count: {masmasCount}\n");
+    }
+
+    private int CountMASMAS(string[] m)
+    {
+        int count = 0;
+        for(int r = 1; r<m.Length-1; r++)
+        {
+            for (int c = 1; c < m[0].Length-1; c++)
+            {
+                if (m[r][c] != 'A') continue;
+                bool v1 = m[r - 1][c - 1] == 'S' && m[r - 1][c + 1] == 'S' && m[r + 1][c - 1] == 'M' && m[r + 1][c + 1] == 'M';
+                bool v2 = m[r - 1][c - 1] == 'M' && m[r - 1][c + 1] == 'S' && m[r + 1][c - 1] == 'M' && m[r + 1][c + 1] == 'S';
+                bool v3 = m[r - 1][c - 1] == 'M' && m[r - 1][c + 1] == 'M' && m[r + 1][c - 1] == 'S' && m[r + 1][c + 1] == 'S';
+                bool v4 = m[r - 1][c - 1] == 'S' && m[r - 1][c + 1] == 'M' && m[r + 1][c - 1] == 'S' && m[r + 1][c + 1] == 'M';
+
+                if (v1 || v2 || v3 || v4) count++;
+            }
+        }
+        return count;
     }
 
     private int CountXmas(string input)
