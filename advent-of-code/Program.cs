@@ -3,6 +3,7 @@ using advent_of_code.december_1;
 using advent_of_code.december_2;
 using advent_of_code.december_3;
 using advent_of_code.december_4;
+using advent_of_code.december_5;
 
 //December 1
 Console.WriteLine("December 1");
@@ -27,3 +28,5 @@ _ = new Challenge3();
 //December 4
 _ = new Challenge4();
 
+//December 5
+_ = new Challenge5();
