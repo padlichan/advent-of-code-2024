@@ -1,5 +1,6 @@
 ﻿
 using System.Diagnostics;
+using System.Threading;
 
 namespace advent_of_code.december_6;
 
@@ -15,13 +16,14 @@ internal class Challenge6
         backupMap = GetData();
         guardPos = FindGuard();
         backupGuardPos = FindGuard();
-        Stopwatch sw = Stopwatch.StartNew();
-        Go();
-        sw.Stop();
-        var timeout = (sw.Elapsed.TotalMilliseconds)*5;
+        IsLoop();
         Console.WriteLine("December 6");
         Console.WriteLine($"Number of positions visited: {CountX() + 1}");
-        Console.WriteLine($"Number of possible obstacles: {CountPossibleObstacles(timeout)}");
+        Stopwatch sw = Stopwatch.StartNew();
+        int obstacleCount = CountPossibleObstacles();
+        sw.Stop();
+        Console.WriteLine($"Time elapsed: {sw.ElapsedMilliseconds} ms");
+        Console.WriteLine($"Number of possible obstacles: {obstacleCount}\n");
         Console.WriteLine();
     }
 
@@ -53,26 +55,40 @@ internal class Challenge6
         return true;
     }
 
-    private int CountPossibleObstacles(double timeout)
+    private int CountPossibleObstacles()
     {
-        Console.WriteLine($"Timeout: {timeout}");
         int count = 0;
         for (int i = 0; i < map.GetLength(0); i++)
         {
-                Console.WriteLine($"current line: {i}");
+            Console.WriteLine($"current line: {i}");
             for (int j = 0; j < map.GetLength(1); j++)
             {
                 map = (char[,])backupMap.Clone();
                 guardPos = FindGuard();
 
-                if (map[i,j] == '.')
+                if (map[i, j] == '.')
                 {
                     map[i, j] = '#';
-                    if (!Go(timeout)) count++;
+                    if (IsLoop()) count++;
                 }
             }
         }
         return count;
+    }
+
+    private bool IsLoop()
+    {
+        HashSet<GuardPosition> visited = [guardPos];
+
+        while (IsOnMap(guardPos.Row, guardPos.Column))
+        {
+            int canMove = CanMove();
+            if (canMove == 1) Move();
+            else if (canMove == 0) TurnRight();
+            else if (canMove == -1) break;
+            if (!visited.Add(guardPos)) return true;
+        }
+        return false;
     }
 
     private bool IsOnMap(int row, int column)
@@ -197,6 +213,27 @@ public class GuardPosition(int x, int y, Direction direction)
     public int Row = x;
     public int Column = y;
     public Direction Direction = direction;
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Row, Column, Direction);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is GuardPosition other)
+        {
+            return Row == other.Row && Column == other.Column && Direction == other.Direction;
+        }
+        return false;
+    }
+}
+
+public class Position(char symbol)
+{
+    public char Symbol = symbol;
+    public bool IsVisited = false;
+    public bool IsObstacle = false;
 }
 
 public enum Direction
