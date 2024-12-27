@@ -15,10 +15,18 @@
     <None Remove="Resources\challenge-4-input.txt" />
     <None Remove="Resources\challenge-5-input-rules.txt" />
     <None Remove="Resources\challenge-5-input-updates.txt" />
+    <None Remove="Resources\challenge-6-input - Copy.txt" />
+    <None Remove="Resources\challenge-6-input.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Resources\challenge-1-input.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\challenge-6-input - Copy.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\challenge-6-input.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\challenge-5-input-updates.txt">

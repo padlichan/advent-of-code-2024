@@ -4,6 +4,7 @@ using advent_of_code.december_2;
 using advent_of_code.december_3;
 using advent_of_code.december_4;
 using advent_of_code.december_5;
+using advent_of_code.december_6;
 
 //December 1
 Console.WriteLine("December 1");
@@ -23,10 +24,13 @@ Console.WriteLine($"Safe reports with dampening: {Challenge2.CountSafeReportsWit
 Console.WriteLine();
 
 //December 3
-_ = new Challenge3();
+//_ = new Challenge3();
 
 //December 4
-_ = new Challenge4();
+//_ = new Challenge4();
 
 //December 5
-_ = new Challenge5();
+//_ = new Challenge5();
+
+//December 6
+_ = new Challenge6();
