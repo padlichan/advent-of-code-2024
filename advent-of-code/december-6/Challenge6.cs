@@ -5,15 +5,16 @@ namespace advent_of_code.december_6;
 
 internal class Challenge6
 {
-    private char[,] map {  get; set; }
-    private GuardPosition guardPos {  get; set; }
+    private char[,] map { get; set; }
+    private GuardPosition guardPos { get; set; }
     public Challenge6()
     {
         map = GetData();
         guardPos = FindGuard();
         Go();
         Console.WriteLine("December 6");
-        Console.WriteLine($"Number of positions visited: {CountX()+1}");
+        Console.WriteLine($"Number of positions visited: {CountX() + 1}");
+        Console.WriteLine();
     }
 
     private int CountX()
@@ -31,7 +32,7 @@ internal class Challenge6
 
     private void Go()
     {
-        while(isOnMap())
+        while (IsOnMap(guardPos.Row, guardPos.Column))
         {
             int canMove = CanMove();
             if (canMove == 1) Move();
@@ -40,12 +41,11 @@ internal class Challenge6
         }
     }
 
-    private bool isOnMap()
+    private bool IsOnMap(int row, int column)
     {
-        return guardPos.Row >= 0 && guardPos.Row < map.GetLength(0) 
-               && guardPos.Column >= 0 && guardPos.Column < map.GetLength(1);
+        return row >= 0 && row < map.GetLength(0)
+               && column >= 0 && column < map.GetLength(1);
     }
-
 
     private void DrawMap()
     {
@@ -53,7 +53,7 @@ internal class Challenge6
         {
             for (int j = 0; j < map.GetLength(1); j++)
             {
-                Console.Write(map[i,j]);
+                Console.Write(map[i, j]);
             }
             Console.WriteLine();
         }
@@ -61,63 +61,42 @@ internal class Challenge6
 
     private void Move()
     {
-        switch(guardPos.Direction)
-        {
-            case Direction.Up:
-            map[guardPos.Row, guardPos.Column] = 'X';
-            guardPos.Row--;
-            map[guardPos.Row, guardPos.Column] = '^';
-            break;
-
-            case Direction.Down:
-            map[guardPos.Row, guardPos.Column] = 'X';
-            guardPos.Row++;
-            map[guardPos.Row, guardPos.Column] = 'V';
-            break;
-
-            case Direction.Left:
-            map[guardPos.Row, guardPos.Column] = 'X';
-            guardPos.Column--;
-            map[guardPos.Row, guardPos.Column] = '<';
-            break;
-            case Direction.Right:
-            map[guardPos.Row, guardPos.Column] = 'X';
-            guardPos.Column++;
-            map[guardPos.Row, guardPos.Column] = '>';
-            break;
-        }
+        var newpos = GetNextPosition();
+        map[guardPos.Row, guardPos.Column] = 'X';
+        guardPos.Row = newpos.row;
+        guardPos.Column = newpos.column;
+        map[guardPos.Row, guardPos.Column] = DirectionToChar(guardPos.Direction);
     }
 
-    private int CanMove()
+    private (int row, int column) GetNextPosition()
     {
         switch (guardPos.Direction)
         {
             case Direction.Up:
-            if (guardPos.Row - 1 < 0) return -1;
-            if(map[guardPos.Row - 1, guardPos.Column] != '#') return 1;
-            return 0;
+            return (guardPos.Row - 1, guardPos.Column);
 
             case Direction.Down:
-            if (guardPos.Row + 1 >= map.GetLength(0)) return -1;
-            if (map[guardPos.Row + 1, guardPos.Column] != '#') return 1;
-            return 0;
+            return (guardPos.Row + 1, guardPos.Column);
 
             case Direction.Left:
-            if (guardPos.Column - 1 < 0) return -1;
-            if (map[guardPos.Row, guardPos.Column - 1] != '#') return 1;
-            return 0;
+            return (guardPos.Row, guardPos.Column - 1);
 
             case Direction.Right:
-            if (guardPos.Column + 1 >= map.GetLength(1)) return -1;
-            if (map[guardPos.Row, guardPos.Column + 1] != '#') return 1;
-            return 0;
+            return (guardPos.Row, guardPos.Column + 1);
         }
-        return -1;
+        return (guardPos.Row, guardPos.Column);
+    }
+    private int CanMove()
+    {
+        var nextpos = GetNextPosition();
+        if (!IsOnMap(nextpos.row, nextpos.column)) return -1;
+        if (map[nextpos.row, nextpos.column] == '#') return 0;
+        return 1; 
     }
 
     private void TurnRight()
     {
-       switch (guardPos.Direction)
+        switch (guardPos.Direction)
         {
             case Direction.Up: guardPos.Direction = Direction.Right; break;
             case Direction.Down: guardPos.Direction = Direction.Left; break;
