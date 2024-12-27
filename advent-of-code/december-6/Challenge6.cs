@@ -6,14 +6,22 @@ namespace advent_of_code.december_6;
 internal class Challenge6
 {
     private char[,] map { get; set; }
+    private char[,] backupMap { get; set; }
     private GuardPosition guardPos { get; set; }
+    private GuardPosition backupGuardPos { get; set; }
     public Challenge6()
     {
         map = GetData();
+        backupMap = GetData();
         guardPos = FindGuard();
+        backupGuardPos = FindGuard();
+        Stopwatch sw = Stopwatch.StartNew();
         Go();
+        sw.Stop();
+        var timeout = (sw.Elapsed.TotalMilliseconds)*5;
         Console.WriteLine("December 6");
         Console.WriteLine($"Number of positions visited: {CountX() + 1}");
+        Console.WriteLine($"Number of possible obstacles: {CountPossibleObstacles(timeout)}");
         Console.WriteLine();
     }
 
@@ -30,15 +38,41 @@ internal class Challenge6
         return count;
     }
 
-    private void Go()
+    private bool Go(double? timeout = 2)
     {
+        Stopwatch sw = Stopwatch.StartNew();
         while (IsOnMap(guardPos.Row, guardPos.Column))
         {
+            if (sw.ElapsedMilliseconds > timeout) return false;
             int canMove = CanMove();
             if (canMove == 1) Move();
             else if (canMove == 0) TurnRight();
             else if (canMove == -1) break;
         }
+        sw.Stop();
+        return true;
+    }
+
+    private int CountPossibleObstacles(double timeout)
+    {
+        Console.WriteLine($"Timeout: {timeout}");
+        int count = 0;
+        for (int i = 0; i < map.GetLength(0); i++)
+        {
+                Console.WriteLine($"current line: {i}");
+            for (int j = 0; j < map.GetLength(1); j++)
+            {
+                map = (char[,])backupMap.Clone();
+                guardPos = FindGuard();
+
+                if (map[i,j] == '.')
+                {
+                    map[i, j] = '#';
+                    if (!Go(timeout)) count++;
+                }
+            }
+        }
+        return count;
     }
 
     private bool IsOnMap(int row, int column)
@@ -91,7 +125,7 @@ internal class Challenge6
         var nextpos = GetNextPosition();
         if (!IsOnMap(nextpos.row, nextpos.column)) return -1;
         if (map[nextpos.row, nextpos.column] == '#') return 0;
-        return 1; 
+        return 1;
     }
 
     private void TurnRight()
