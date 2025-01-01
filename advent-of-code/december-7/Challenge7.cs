@@ -1,4 +1,6 @@
-﻿using System.Reflection.Metadata;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Reflection.Metadata;
+using System.Text;
 
 namespace advent_of_code.december_7;
 
@@ -7,29 +9,20 @@ internal class Challenge7
 
     private readonly Func<long, long, long> add = (long a, long b) => a + b;
     private readonly Func<long, long, long> multiply = (long a, long b) => a * b;
+    private readonly Func<long, long, long> concat = (long a, long b) => long.Parse(a.ToString()+b.ToString());
     public Challenge7()
     {
-        var numbersList = GetNumbersList();
-        var results = GetResults();
+        var dataArray = ReadData("Resources/challenge-7-input.txt");
+        var numbersList = GetNumbersData(dataArray);
+        var results = GetResultsData(dataArray);
         long sumOfEquations = results.Where((r, i) => CheckLineForAll(numbersList[i], r)).Sum();
         Console.WriteLine("December 7");
         Console.WriteLine($"Sum of correct equation results: {sumOfEquations}");
-    }
 
-    public List<long> GetResults()
-    {
-        var data = File.ReadAllText("Resources/challenge-7-input.txt");
-        var dataArray = data.Split(Environment.NewLine);
-        var results = dataArray.Select(line => long.Parse(line.Split(':')[0])).ToList();
-        return results;
+        long sumOfEquationsWithConcat = results.Where((r, i) => CheckLineForAllConcat(numbersList[i], r)).Sum();
+        Console.WriteLine($"Sum of correct equation results with concationation: {sumOfEquationsWithConcat}");
     }
-    public List<List<long>> GetNumbersList()
-    {
-        var data = File.ReadAllText("Resources/challenge-7-input.txt");
-        var dataArray = data.Split(Environment.NewLine);
-        var numbers = dataArray.Select(line => line.Split(' ').Skip(1).Select(long.Parse).ToList()).ToList();
-        return numbers;
-    }
+   
 
     private List<List<Func<long, long, long>>> GetOperatorsList(long number)
     {
@@ -42,6 +35,20 @@ internal class Challenge7
         }
 
         var operatorsList = binaries.Select(b => b.Select(c => c == '1' ? add : multiply).ToList()).ToList();
+        return operatorsList;
+    }
+
+    private List<List<Func<long, long, long>>> GetOperatorsListWithConcat(long number)
+    {
+        int limit = ((int)Math.Pow(3, number - 1)) - 1;
+        List<string> binaries = [];
+        for (int i = 0; i <= limit; i++)
+        {
+            var binary = ConvertToBase3(i).PadLeft(ConvertToBase3(limit).Length, '0');
+            binaries.Add(binary);
+        }
+
+        var operatorsList = binaries.Select(b => b.Select(c => c == '1' ? add : c == '2' ? multiply : concat).ToList()).ToList();
         return operatorsList;
     }
 
@@ -66,6 +73,42 @@ internal class Challenge7
         return result;
     }
 
+    private bool CheckLineForAllConcat(List<long> numbers, long expectedResult)
+    {
+        var operatorsList = GetOperatorsListWithConcat(numbers.Count);
+        var result = operatorsList.Any(o => CheckLine(numbers, expectedResult, o));
+        return result;
+    }
+
+    private string ConvertToBase3(int number)
+    {
+        StringBuilder base3 = new StringBuilder();
+
+        while (number > 0)
+        {
+            int remainder = number % 3;
+            base3.Insert(0, remainder); 
+            number /= 3;
+        }
+        return base3.ToString();
+    }
+
+    private string[] ReadData(string path)
+    {
+        var data = File.ReadAllText(path);
+        var dataArray = data.Split(Environment.NewLine);
+        return dataArray;
+    }
+    public List<long> GetResultsData(string[] dataArray)
+    {
+        var results = dataArray.Select(line => long.Parse(line.Split(':')[0])).ToList();
+        return results;
+    }
+    public List<List<long>> GetNumbersData(string[] dataArray)
+    {
+        var numbers = dataArray.Select(line => line.Split(' ').Skip(1).Select(long.Parse).ToList()).ToList();
+        return numbers;
+    }
     private void PrintNumbers(List<long> numbers)
     {
         numbers.ForEach(n => Console.Write(n + " "));
